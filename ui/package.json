@@ -12,7 +12,9 @@
     "react-scripts": "3.4.0"
   },
   "devDependencies": {
-    "buildify": "^0.4.0"
+    "buildify": "^0.4.0",
+    "fileset": "^2.0.3",
+    "rimraf": "^2.6.2"
   },
   "scripts": {
     "start": "react-scripts start",

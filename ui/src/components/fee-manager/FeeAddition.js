@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 import {LIST_OF_CURRENCIES, NUMBER_REGEX} from "../../Constants";
 import axios from "axios";
 
-const FeeAddition = ({setIsError, setIsLoading}) => {
+const FeeAddition = ({setIsError, setIsLoading, setIsReloadList}) => {
 
     const [feeAdditionForm, setFeeAdditionForm] = useState({
         currencyFrom: 'EUR',
@@ -40,7 +40,8 @@ const FeeAddition = ({setIsError, setIsLoading}) => {
             setIsError(false);
             axios.post('/fee', feeAdditionForm)
                 .then(() => {
-                    setIsLoading(true);
+                    setIsReloadList(true);
+                    setIsLoading(false);
                 })
                 .catch(() => {
                     setIsLoading(false);

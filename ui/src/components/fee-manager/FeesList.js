@@ -6,15 +6,17 @@ import axios from "axios";
 
 const queryString = require('query-string');
 
-const FeesList = ({isLoading, setIsError, setIsLoading}) => {
+const FeesList = ({isReloadList, setIsError, setIsLoading, setIsReloadList}) => {
 
     const [listOfFees, setListOfFees] = useState([]);
 
-    if (isLoading) {
+    if (isReloadList) {
+        setIsLoading(true);
         setIsError(false);
+        setIsReloadList(false);
         axios.get('/fees')
-            .then(res => {
-                setListOfFees(res);
+            .then(({data}) => {
+                setListOfFees(data);
                 setIsLoading(false);
             }).catch(() => {
                 setIsLoading(false);
@@ -24,10 +26,14 @@ const FeesList = ({isLoading, setIsError, setIsLoading}) => {
     }
 
     const handleRemove = currencyInfo => {
+        setIsLoading(true);
         axios.delete('/fee' + queryString.stringify(currencyInfo))
             .then(() => {
-                setIsLoading(true);
-            });
+                setIsReloadList(true);
+                setIsLoading(false);
+            }).catch(() => {
+                setIsLoading(false);
+        });
     };
 
     return (

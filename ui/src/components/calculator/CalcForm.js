@@ -42,9 +42,9 @@ const CalcForm = ({setIsLoading, setIsError, setResult}) => {
             setIsLoading(true);
             setIsError(false);
             axios.get('/calculate?' + queryString.stringify(calculationForm))
-                .then(res => {
+                .then(({data}) => {
                     setIsLoading(false);
-                    setResult(res + ' ' + calculationForm.currencyTo);
+                    setResult(data + ' ' + calculationForm.currencyTo);
                 })
                 .catch(() => {
                     setIsLoading(false);

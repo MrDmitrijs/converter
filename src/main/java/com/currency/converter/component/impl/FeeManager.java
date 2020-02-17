@@ -19,8 +19,8 @@ public class FeeManager implements IFeeManager {
     private final FeeRepositoryManager feeRepositoryManager;
 
     public FeeManager(@NonNull final FeeRepositoryManager feeRepositoryManager,
-            @NonNull @Value("${exchange.default.fee}") final BigDecimal defaultFee) {
-        this.defaultFee = defaultFee;
+            @NonNull @Value("${exchange.default.fee}") final String defaultFee) {
+        this.defaultFee = new BigDecimal(defaultFee);
         this.feeRepositoryManager = feeRepositoryManager;
     }
 
