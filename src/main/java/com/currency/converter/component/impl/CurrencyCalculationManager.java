@@ -42,6 +42,4 @@ public class CurrencyCalculationManager implements ICurrencyCalculationManager {
         final BigDecimal multiplyWithRate = amountWithFeeSubAmount.multiply(rate);
         return multiplyWithRate.setScale(2, RoundingMode.CEILING);
     }
-
-
 }

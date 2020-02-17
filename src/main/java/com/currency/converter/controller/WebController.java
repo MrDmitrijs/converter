@@ -6,7 +6,9 @@ import com.currency.converter.domain.CurrencyExchangeInfo;
 import com.currency.converter.domain.CurrencyInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -31,14 +33,12 @@ public class WebController {
         return iCurrencyCalculationManager.exchangeCurrency(currencyExchangeInfo);
     }
 
-    //TODO: change to post
-    @GetMapping("/save/fee")
+    @PostMapping("/fee")
     public void saveFee(@Valid final CurrencyInfo currencyInfo) {
         iFeeManager.saveFee(currencyInfo);
     }
 
-    //TODO: change to delete
-    @GetMapping("/delete/fee")
+    @DeleteMapping("/fee")
     public void deleteFee(@Valid final CurrencyInfo currencyInfo) {
         iFeeManager.deleteFee(currencyInfo);
     }
@@ -47,6 +47,4 @@ public class WebController {
     public List<CurrencyInfo> getFees() {
         return iFeeManager.getAllFees();
     }
-
-
 }

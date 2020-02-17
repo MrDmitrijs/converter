@@ -3,6 +3,7 @@ package com.currency.converter.persistance;
 import com.currency.converter.domain.Currency;
 import com.currency.converter.domain.CurrencyFeeEntity;
 import com.currency.converter.domain.CurrencyInfo;
+import com.currency.converter.exception.FeeRepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,28 +53,31 @@ public class FeeRepositoryManager {
 
     public void deleteFee(final CurrencyInfo currencyInfo) {
 
-        Optional<CurrencyFeeEntity> answer = repository.findAll().stream()
+        final Optional<CurrencyFeeEntity> answer = getAllFess().stream()
                 .filter(currencyFeeEntity -> currencyFeeEntity.getCurrencyInfo().equals(currencyInfo)).findFirst();
 
         if(answer.isPresent()) {
             final CurrencyFeeEntity currencyFeeEntity = answer.get();
             LOG.info("Going to delete currency info: {}", currencyFeeEntity.getCurrencyInfo());
-            repository.delete(currencyFeeEntity);
+            try {
+                repository.delete(currencyFeeEntity);
+            } catch (final Exception e) {
+                LOG.error("Could not to delete entity: {}", currencyFeeEntity);
+                throw new FeeRepositoryException("Failed to delete entity", e);
+            }
         } else {
             LOG.error("Did not find currency info {} in data base", currencyInfo);
         }
     }
 
     public List<CurrencyInfo> getFees() {
-        final List<CurrencyFeeEntity> all = repository.findAll();
-        return all.stream()
+        return getAllFess().stream()
                 .map(CurrencyFeeEntity::getCurrencyInfo)
                 .collect(Collectors.toList());
     }
 
     private Optional<CurrencyFeeEntity> findByCurrency(final Currency currencyFrom, final Currency currencyTo) {
-        final List<CurrencyFeeEntity> all = repository.findAll();
-        return all.stream().filter(currencyFeeEntity -> {
+        return getAllFess().stream().filter(currencyFeeEntity -> {
             final CurrencyInfo currencyInfo = currencyFeeEntity.getCurrencyInfo();
             return currencyInfo.getCurrencyFrom().equals(currencyFrom) && currencyInfo.getCurrencyTo().equals(currencyTo);
         }).findAny();
@@ -84,6 +88,17 @@ public class FeeRepositoryManager {
             repository.saveAndFlush(currencyFeeEntity);
         } catch (final Exception e) {
             LOG.error("Failed to store request entity: {}, with exception: {}", currencyFeeEntity, e);
+            throw new FeeRepositoryException("Failed to store request entity.", e);
         }
+    }
+
+    private List<CurrencyFeeEntity> getAllFess() {
+        final List<CurrencyFeeEntity> listOfFees;
+        try {
+            listOfFees = repository.findAll();
+        } catch (final Exception e) {
+            throw new FeeRepositoryException("Failed to get all fees.", e);
+        }
+        return listOfFees;
     }
 }
