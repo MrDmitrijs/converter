@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import Form from "react-bootstrap/Form";
-import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import {LIST_OF_CURRENCIES, NUMBER_REGEX} from "../../Constants";
+import {NUMBER_REGEX} from "../../Constants";
 import axios from "axios";
+import CurrencySelector from "../common/CurrencySelector";
+import NumberField from "../common/NumberField";
 
-const FeeAddition = ({setIsError, setIsLoading, setIsReloadList}) => {
+const FeeAddition = ({setIsLoading, setIsError, setLoadListOfFees}) => {
 
     const [feeAdditionForm, setFeeAdditionForm] = useState({
         currencyFrom: 'EUR',
@@ -22,11 +23,11 @@ const FeeAddition = ({setIsError, setIsLoading, setIsReloadList}) => {
     const isValidForm = () => {
         const errors = {fee: false, currencyFrom: false, currencyTo: false};
         let isValid = true;
-        if (!feeAdditionForm.fee === '' || !NUMBER_REGEX.test(feeAdditionForm.fee)) {
+        if (!feeAdditionForm.fee || !NUMBER_REGEX.test(feeAdditionForm.fee)) {
             errors.fee = true;
             isValid = false;
         }
-        if(feeAdditionForm.currencyFrom === feeAdditionForm.currencyTo) {
+        if (feeAdditionForm.currencyFrom === feeAdditionForm.currencyTo) {
             errors.currencyFrom = true;
             errors.currencyTo = true;
             isValid = false;
@@ -37,63 +38,56 @@ const FeeAddition = ({setIsError, setIsLoading, setIsReloadList}) => {
 
     const handleSubmit = () => {
         if (isValidForm()) {
-            setIsError(false);
             axios.post('/fee', feeAdditionForm)
                 .then(() => {
-                    setIsReloadList(true);
-                    setIsLoading(false);
+                    setIsLoading();
+                    setLoadListOfFees(true);
                 })
                 .catch(() => {
-                    setIsLoading(false);
-                    setIsError(true);
+                    setIsError();
                 })
+        }
+    };
+
+    const handleOnChange = event => {
+        event.persist();
+        let value = event.target.value;
+        const id = event.target.id;
+        switch (id) {
+            case "fee":
+                if (value <= 0) value = 0.01;
+                if (value > 1) value = 0.99;
+                return setFeeAdditionForm(prevState => ({...prevState, fee: value}));
+            case "currencyFrom":
+                return setFeeAdditionForm(prevState => ({...prevState, currencyFrom: value}));
+            case "currencyTo":
+                return setFeeAdditionForm(prevState => ({...prevState, currencyTo: value}));
+            default:
+                setIsError();
         }
     };
 
     return (
         <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
-                <Form.Group as={Col} controlId="currencyFrom">
-                    <Form.Label>From</Form.Label>
-                    <Form.Control as="select"
+                <CurrencySelector error={errors.currencyFrom}
+                                  handleOnChange={handleOnChange}
                                   value={feeAdditionForm.currencyFrom}
-                                  isInvalid={!!errors.currencyFrom}
-                                  onChange={event => {
-                        event.persist();
-                        setFeeAdditionForm(prevState => ({...prevState, currencyFrom: event.target.value}))
-                    }}>
-                        {LIST_OF_CURRENCIES.map(currency => {
-                            return <option value={currency}>{currency}</option>
-                        })}
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group as={Col} controlId="currencyTo">
-                    <Form.Label>To</Form.Label>
-                    <Form.Control as="select"
+                                  id={"currencyFrom"}
+                                  label={"From"}/>
+
+                <CurrencySelector error={errors.currencyTo}
+                                  handleOnChange={handleOnChange}
                                   value={feeAdditionForm.currencyTo}
-                                  isInvalid={!!errors.currencyTo}
-                                  onChange={event => {
-                        event.persist();
-                        setFeeAdditionForm(prevState => ({...prevState, currencyTo: event.target.value}))
-                    }}>
-                        {LIST_OF_CURRENCIES.map(currency => {
-                            return <option value={currency}>{currency}</option>
-                        })}
-                    </Form.Control>
-                </Form.Group>
-                <Form.Group as={Col} controlId="fee">
-                    <Form.Label>Fee</Form.Label>
-                    <Form.Control
-                        type="number"
-                        isInvalid={!!errors.fee}
-                        placeholder="Fee"
-                        value={feeAdditionForm.fee}
-                        onChange={event => {
-                            event.persist();
-                            setFeeAdditionForm(prevState => ({...prevState, fee: event.target.fee}))
-                        }}
-                    />
-                </Form.Group>
+                                  id={"currencyTo"}
+                                  label={"To"}/>
+
+                <NumberField error={errors.fee}
+                             handleOnChange={handleOnChange}
+                             value={feeAdditionForm.fee}
+                             id={"fee"}
+                             label={"Fee"}/>
+
                 <Button variant="primary" type="button" className="addBtn" onClick={handleSubmit}>
                     Add
                 </Button>

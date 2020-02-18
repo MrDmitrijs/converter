@@ -1,28 +1,48 @@
-import React, {useState} from "react";
+import React, {useReducer, useState} from "react";
 import FeeAddition from './FeeAddition';
 import FeesList from "./FeesList";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
+import axios from "axios";
+import {actions, reducer} from "../../Constants";
 
 const FeeManager = () => {
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const initState = {
+        isLoading: false,
+        isError: false,
+        result: []
+    };
 
-    const [isReloadList, setIsReloadList] = useState(true);
+    const [state, dispatch] = useReducer(reducer, initState, undefined);
+    const [loadListOfFees, setLoadListOfFees] = useState(true);
+
+    if (loadListOfFees) {
+        setLoadListOfFees(false);
+        dispatch({type: actions.LOADING});
+        axios.get('/fees')
+            .then(({data}) => {
+                dispatch({type: actions.SET_RESULT, payload: data});
+            }).catch(() => {
+                dispatch({type: actions.ERROR})
+            }
+        )
+    }
 
     return (
         <>
             <h1>Fee manager</h1>
-            <FeeAddition setIsError={setIsError} setIsLoading={setIsLoading} setIsReloadList={setIsReloadList}/>
+            <FeeAddition setIsLoading={() => dispatch({type: actions.LOADING})}
+                         setIsError={() => dispatch({type: actions.ERROR})}
+                         setLoadListOfFees={setLoadListOfFees}/>
             <hr/>
-            {!isLoading && !isError &&
-            <FeesList isReloadList={isReloadList} setIsError={setIsError} setIsLoading={setIsLoading}
-                      setIsReloadList={setIsReloadList}/>}
-            {isLoading && <div className="spinner">
+            <FeesList setIsLoading={() => dispatch({type: actions.LOADING})}
+                      listOfFees={state.result}
+                      setLoadListOfFees={setLoadListOfFees}/>
+            {state.isLoading && <div className="spinner">
                 <Spinner animation="border"/>
             </div>}
-            {isError &&
+            {state.isError &&
             <Alert variant={'danger'}>
                 Can not load list of fees!
             </Alert>}

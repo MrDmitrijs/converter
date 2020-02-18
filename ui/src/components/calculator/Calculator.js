@@ -1,32 +1,39 @@
-import React, {useState} from "react";
+import React, {useReducer} from "react";
 import Spinner from "react-bootstrap/Spinner";
-import CalcForm from "./CalcForm";
+import CalculatorForm from "./CalculatorForm";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
+import {actions, reducer} from "../../Constants";
 
 const Calculator = () => {
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const [result, setResult] = useState('');
+    const initState = {
+        isLoading: false,
+        isError: false,
+        result: ''
+    };
+
+    const [state, dispatch] = useReducer(reducer, initState, undefined);
 
     return (
         <div className="margin-bottom">
-            <CalcForm setIsLoading={setIsLoading} setIsError={setIsError} setResult={setResult}/>
-            {isLoading && <div className="spinner">
+            <CalculatorForm setIsLoading={() => dispatch({type: actions.LOADING})}
+                            setIsError={() => dispatch({type: actions.ERROR})}
+                            setResult={result => dispatch({type: actions.SET_RESULT, payload: result})}/>
+            {state.isLoading && <div className="spinner">
                 <Spinner animation="border"/>
             </div>}
-            {isError &&
+            {state.isError &&
             <Alert variant={'danger'}>
                 Something went wrong! Please try again later!
             </Alert>
             }
-            {!isLoading && !isError &&
+            {!state.isLoading && !state.isError &&
             <Row className="justify-content-md-center">
                 <Col md="auto">
                     <h3>
-                        {result}
+                        {state.result}
                     </h3>
                 </Col>
             </Row>

@@ -27,10 +27,7 @@ public class FeeRepositoryManager {
     public void saveFee(final CurrencyInfo currencyInfo) {
         final Optional<CurrencyFeeEntity> answer = findByCurrency(currencyInfo.getCurrencyFrom(), currencyInfo.getCurrencyTo());
         if (answer.isPresent()) {
-            final CurrencyFeeEntity currencyFeeEntity = answer.get();
-            currencyFeeEntity.setCurrencyInfo(currencyInfo);
-            LOG.info("Going to update currency info: {} with {}", currencyFeeEntity.getCurrencyInfo(), currencyInfo);
-            saveCurrencyFeeEntity(currencyFeeEntity);
+            LOG.info("This currencyInfo is already exists: {}, delete it to update.", currencyInfo);
         } else {
             final CurrencyFeeEntity currencyFeeEntity = new CurrencyFeeEntity(currencyInfo);
             LOG.info("Going to save currency info: {}", currencyInfo);
