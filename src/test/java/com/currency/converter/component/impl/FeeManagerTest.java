@@ -1,20 +1,20 @@
 package com.currency.converter.component.impl;
 
+import static com.currency.converter.domain.Currency.EUR;
+import static com.currency.converter.domain.Currency.USD;
+import static java.util.Optional.empty;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.math.BigDecimal;
+import java.util.Optional;
+
 import com.currency.converter.domain.CurrencyInfo;
 import com.currency.converter.persistance.FeeRepositoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.Optional;
-
-import static com.currency.converter.domain.Currency.EUR;
-import static com.currency.converter.domain.Currency.USD;
-import static java.util.Optional.empty;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 class FeeManagerTest {
 
@@ -31,20 +31,20 @@ class FeeManagerTest {
     void saveFee() {
         final CurrencyInfo currencyInfo = new CurrencyInfo();
         feeManager.saveFee(currencyInfo);
-        verify(feeRepositoryManager, atLeastOnce()).saveFee(currencyInfo);
+        verify(feeRepositoryManager, atMostOnce()).saveFee(currencyInfo);
     }
 
     @Test
     void deleteFee() {
         final CurrencyInfo currencyInfo = new CurrencyInfo();
         feeManager.deleteFee(currencyInfo);
-        verify(feeRepositoryManager, atLeastOnce()).deleteFee(currencyInfo);
+        verify(feeRepositoryManager, atMostOnce()).deleteFee(currencyInfo);
     }
 
     @Test
     void getAllFees() {
         feeManager.getAllFees();
-        verify(feeRepositoryManager, atLeastOnce()).getFees();
+        verify(feeRepositoryManager, atMostOnce()).getFees();
     }
 
     @Nested

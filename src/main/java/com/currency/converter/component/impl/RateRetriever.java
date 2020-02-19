@@ -1,5 +1,13 @@
 package com.currency.converter.component.impl;
 
+import static java.lang.String.format;
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpStatus.OK;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.currency.converter.domain.Currency;
 import com.currency.converter.domain.ExchangeRateResponse;
 import com.currency.converter.exception.ExchangeRateApiException;
@@ -12,14 +20,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.http.HttpStatus.OK;
 
 @Component
 public class RateRetriever {

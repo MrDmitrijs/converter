@@ -1,5 +1,11 @@
 package com.currency.converter.controller;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.math.BigDecimal;
+import java.util.List;
+import javax.validation.Valid;
+
 import com.currency.converter.component.ICurrencyCalculationManager;
 import com.currency.converter.component.IFeeManager;
 import com.currency.converter.domain.CurrencyExchangeInfo;
@@ -7,12 +13,6 @@ import com.currency.converter.domain.CurrencyInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class WebRestController {

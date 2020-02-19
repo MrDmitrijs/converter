@@ -1,5 +1,13 @@
 package com.currency.converter.component.impl;
 
+import static com.currency.converter.domain.Currency.EUR;
+import static com.currency.converter.domain.Currency.USD;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+
 import com.currency.converter.component.IFeeManager;
 import com.currency.converter.domain.CurrencyExchangeInfo;
 import org.junit.jupiter.api.Test;
@@ -8,14 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.math.BigDecimal;
-
-import static com.currency.converter.domain.Currency.EUR;
-import static com.currency.converter.domain.Currency.USD;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CurrencyCalculationManager.class, CurrencyCalculationManagerTest.MockConfig.class})
